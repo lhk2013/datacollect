@@ -45,18 +45,18 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
         infos = soup.select('div[class="ks_list"] div[class="ks_list_xl"] ul li a ')
 
 
-        catUrlList = []
-        for cat in infos:
+        catUrlList = infos[1:10]
+        for cat in catUrlList:
             try:
                 item = DatacollectItem()
 
                 item['name'] = cat.text.encode("utf8")
                 item['href'] = cat.attrs["href"]
                 item['url'] = "https://www.jianke.com" + item['href']
-                next_url = "https://www.jianke.com/jibing/keshi/770"
                 # 这里是用的yield 而不是return
                 # yield item
-                yield scrapy.Request(next_url,callback=self.detail_parse)  # 爬取到的页面如何处理？提交给parse方法处理
+                print item['url']
+                yield scrapy.Request(item['url'],callback=self.detail_parse,meta={"item":item})  # 爬取到的页面如何处理？提交给parse方法处理
             except Exception,e:
                 print e
     def detail_parse(self, response):
@@ -64,7 +64,19 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
         html = response.text
         # item = response.meta['item']
 
-        print html
+        item = response.meta["item"]
+        print "ppppppppppppppppp"
+
+        yield item
+
+        yield scrapy.Request(item['url'], callback=self.detail_parse2,dont_filter=True)  # 爬取到的页面如何处理？提交给parse方法处理
+
+    def detail_parse2(self, response):
+
+        html = response.text
+        # item = response.meta['item']
+
+        print "ppppppppppppppppp"
         item = DatacollectItem()
 
         yield item

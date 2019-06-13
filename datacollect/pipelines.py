@@ -11,12 +11,12 @@ class DatacollectPipeline(object):
     # 初始化的操作，这里我们做本地化直接写成文件，所以初始化文件对象
     def __init__(self):
         print('实例化DatacollectPipeline')
-        self.f = open('itcast_pipeline.json', 'w')
+        # self.f = open('itcast_pipeline.json', 'w')
 
 
     def process_item(self, item, spider):
         content = json.dumps(dict(item))
-        self.f.write(content)
+        # self.f.write(content)
         print(content)
         return item
 
