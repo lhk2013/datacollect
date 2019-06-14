@@ -10,7 +10,7 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
 
     name = "datacollect2"  # 定义蜘蛛名
 
-    allowed_domains = ['www.jianke.com']
+    # allowed_domains = ['www.jianke.com']
 
 
     # start_urls = ['https://www.jianke.com/jibing/keshi/40']
@@ -54,7 +54,7 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
                 item['href'] = cat.attrs["href"]
                 item['url'] = "https://www.jianke.com" + item['href']
                 # 这里是用的yield 而不是return
-                # yield item
+                yield item
                 print item['url']
                 yield scrapy.Request(item['url'],callback=self.detail_parse,meta={"item":item})  # 爬取到的页面如何处理？提交给parse方法处理
             except Exception,e:
@@ -67,17 +67,14 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
         item = response.meta["item"]
         print "ppppppppppppppppp"
 
-        yield item
-
-        yield scrapy.Request(item['url'], callback=self.detail_parse2,dont_filter=True)  # 爬取到的页面如何处理？提交给parse方法处理
+        yield scrapy.Request(item['url'], callback=self.detail_parse2,meta={"item":item},dont_filter=True)  # 爬取到的页面如何处理？提交给parse方法处理
 
     def detail_parse2(self, response):
 
         html = response.text
-        # item = response.meta['item']
+        item = response.meta['item']
 
         print "ppppppppppppppppp"
-        item = DatacollectItem()
 
         yield item
 
