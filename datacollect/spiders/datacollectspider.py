@@ -53,7 +53,7 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
             try:
                 item = DatacollectItem()
 
-                item['text'] = tagA.xpath("@href").extract()
+                item['text'] = tagA.xpath("text()").extract()
                 item['url'] = tagA.attrib["href"]
 
                 # 这里是用的yield 而不是return
@@ -63,7 +63,7 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
                 print e
         else:
             if (len(next_page_url) > 0):
-                yield scrapy.Request(next_page_url[0], callback=self.detail_parse)  # 爬取到的页面如何处理？提交给parse方法处理
+                yield scrapy.Request(next_page_url[0], callback=self.parse1)  # 爬取到的页面如何处理？提交给parse方法处理
             else:
                 print "已经到最后一页"
 
@@ -74,6 +74,8 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
         # item = response.meta['item']
 
         item = response.meta["item"]
+
+
 
         print item
 
