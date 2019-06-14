@@ -23,5 +23,5 @@ class DatacollectPipeline(object):
     #结束后做的操作，在这里我们要关闭文件
     def close_spider(self,spider):
         print('结束')
-        self.f.close()
+        # self.f.close()
 

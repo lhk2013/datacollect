@@ -7,11 +7,9 @@ from bs4 import BeautifulSoup
 
 class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
 
-
     name = "datacollect2"  # 定义蜘蛛名
 
     # allowed_domains = ['www.jianke.com']
-
 
     # start_urls = ['https://www.jianke.com/jibing/keshi/40']
 
@@ -19,11 +17,10 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
 
         # 定义爬取的链接
         urls = [
-            'https://www.jianke.com/jibing/keshi/40'
+            'http://ask.qiuyi.cn/departments/207_1/index.html'
         ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse1)  # 爬取到的页面如何处理？提交给parse方法处理
-
 
     def parse1(self, response):
         '''
@@ -41,45 +38,47 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
         # reg = r'<div class="ks_list_xl">(.*?)</div>'
         # infos = re.findall(reg, html, re.S)
 
-        soup = BeautifulSoup(html)
-        infos = soup.select('div[class="ks_list"] div[class="ks_list_xl"] ul li a ')
+        # soup = BeautifulSoup(html)
+        # next_page_url = soup.select('div[class="page"] a[class="next"]')[1].attrs["href"]
+
+        # next_page_url = response.xpath ("//div[[contains(concat(' ', normalize-space(@class), ' '),' page ')]/a[2]/@href").extract()
+        next_page_url = response.xpath(
+            "//div[contains(concat(' ', normalize-space(@class), ' '),' page ')]/a[contains(concat(' ', normalize-space(@class), ' '),' next ')][2]/@href").extract()
+
+        url_tag_list = response.xpath("//ul[contains(concat(' ', normalize-space(@class), ' '),' active ')]/li/span[1]/a[2]")
 
 
-        catUrlList = infos[1:10]
-        for cat in catUrlList:
+
+        for tagA in url_tag_list:
             try:
                 item = DatacollectItem()
 
-                item['name'] = cat.text.encode("utf8")
-                item['href'] = cat.attrs["href"]
-                item['url'] = "https://www.jianke.com" + item['href']
+                item['text'] = tagA.xpath("@href").extract()
+                item['url'] = tagA.attrib["href"]
+
                 # 这里是用的yield 而不是return
-                yield item
                 print item['url']
-                yield scrapy.Request(item['url'],callback=self.detail_parse,meta={"item":item})  # 爬取到的页面如何处理？提交给parse方法处理
-            except Exception,e:
+                yield scrapy.Request(item['url'], callback=self.detail_parse,meta={"item": item})  # 爬取到的页面如何处理？提交给parse方法处理
+            except Exception, e:
                 print e
+        else:
+            if (len(next_page_url) > 0):
+                yield scrapy.Request(next_page_url[0], callback=self.detail_parse)  # 爬取到的页面如何处理？提交给parse方法处理
+            else:
+                print "已经到最后一页"
+
+
     def detail_parse(self, response):
 
         html = response.text
         # item = response.meta['item']
 
         item = response.meta["item"]
-        print "ppppppppppppppppp"
 
-        yield scrapy.Request(item['url'], callback=self.detail_parse2,meta={"item":item},dont_filter=True)  # 爬取到的页面如何处理？提交给parse方法处理
-
-    def detail_parse2(self, response):
-
-        html = response.text
-        item = response.meta['item']
-
-        print "ppppppppppppppppp"
-
-        yield item
+        print item
 
     # page = response.url.split("/")[-2]  # 根据上面的链接提取分页,如：/page/1/，提取到的就是：1
-        # filename = 'mingyan-%s.html' % page  # 拼接文件名，如果是第一页，最终文件名便是：mingyan-1.html
-        # with open(filename, 'wb') as f:  # python文件操作，不多说了；
-        #     f.write(response.body)  # 刚才下载的页面去哪里了？response.body就代表了刚才下载的页面！
-        # self.log('保存文件: %s' % filename)  # 打个日志
+    # filename = 'mingyan-%s.html' % page  # 拼接文件名，如果是第一页，最终文件名便是：mingyan-1.html
+    # with open(filename, 'wb') as f:  # python文件操作，不多说了；
+    #     f.write(response.body)  # 刚才下载的页面去哪里了？response.body就代表了刚才下载的页面！
+    # self.log('保存文件: %s' % filename)  # 打个日志
