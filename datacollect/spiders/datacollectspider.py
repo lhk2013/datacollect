@@ -53,7 +53,7 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
             try:
                 item = DatacollectItem()
 
-                item['text'] = tagA.xpath("text()").extract()
+                item['title'] = tagA.xpath("text()").extract()[0]
                 item['url'] = tagA.attrib["href"]
 
                 # 这里是用的yield 而不是return
@@ -72,12 +72,16 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
 
         html = response.text
         # item = response.meta['item']
+        content = response.xpath("//div[contains(concat(' ', normalize-space(@class), ' '),' answer ')]/div/div[contains(concat(' ', normalize-space(@class), ' '),' wd_cont_s ')]")
+        reg = r'<p><em>.*?</em>(.*?)</p>'
+        answer = re.findall(reg, html, re.S)
 
         item = response.meta["item"]
 
+        item["answer"] = answer[0]
+        item["source"] = "求医网"
 
-
-        print item
+        yield item
 
     # page = response.url.split("/")[-2]  # 根据上面的链接提取分页,如：/page/1/，提取到的就是：1
     # filename = 'mingyan-%s.html' % page  # 拼接文件名，如果是第一页，最终文件名便是：mingyan-1.html
