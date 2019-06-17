@@ -9,18 +9,23 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
 
     name = "datacollect2"  # 定义蜘蛛名
 
-    # allowed_domains = ['www.jianke.com']
-
-    # start_urls = ['https://www.jianke.com/jibing/keshi/40']
-
     def start_requests(self):  # 由此方法通过下面链接爬取页面
 
         # 定义爬取的链接
+        headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                   'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                   'Cache-Control': 'max-age=0',
+                   'Cookie': '',
+                   'Host': 'ask.qiuyi.cn',
+                   'Proxy-Connection': 'keep-alive',
+                   'Upgrade-Insecure-Requests': '1',
+                   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'}
+
         urls = [
             'http://ask.qiuyi.cn/departments/207_1/index.html'
         ]
         for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse1)  # 爬取到的页面如何处理？提交给parse方法处理
+            yield scrapy.Request(url=url,headers=headers, callback=self.parse1)  # 爬取到的页面如何处理？提交给parse方法处理
 
     def parse1(self, response):
         '''
