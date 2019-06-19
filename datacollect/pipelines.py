@@ -46,5 +46,9 @@ class DatacollectPipeline(object):
         sql = 'INSERT INTO t_spider_collect (%s) VALUES (%s)' % (fields, temp)
         print sql
         print values
-        cursor.execute(sql, values)
-        return db.connection.commit()
+        '''
+            先不保存
+        '''
+
+        # cursor.execute(sql, values)
+        # return db.connection.commit()
