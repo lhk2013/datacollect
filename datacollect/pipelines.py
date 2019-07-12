@@ -54,8 +54,8 @@ class DatacollectPipeline(object):
         sql = 'INSERT INTO t_spider_collect (%s) VALUES (%s)' % (fields, temp)
         print sql
         print values
-        # cursor.execute(sql, values)
-        # return db.connection.commit()
+        cursor.execute(sql, values)
+        return db.connection.commit()
 
     def find_by_answer(self, item):
         keys = item.keys()
