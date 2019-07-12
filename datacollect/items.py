@@ -11,6 +11,7 @@ import scrapy
 class DatacollectItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    cat = scrapy.Field()
     title = scrapy.Field()
     url = scrapy.Field()
     answer = scrapy.Field()

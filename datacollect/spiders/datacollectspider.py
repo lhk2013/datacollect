@@ -22,7 +22,7 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'}
 
         urls = [
-            'http://ask.qiuyi.cn/departments/207_1/index.html'
+            'http://ask.qiuyi.cn/departments/37_1/index.html'
         ]
         for url in urls:
             yield scrapy.Request(url=url,headers=headers, callback=self.parse1)  # 爬取到的页面如何处理？提交给parse方法处理
@@ -85,6 +85,7 @@ class datacollect(scrapy.Spider):  # 需要继承scrapy.Spider类
 
         item["answer"] = answer[0]
         item["source"] = "求医网"
+        item["cat"] = 2
 
         yield item
 
