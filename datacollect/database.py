@@ -6,7 +6,7 @@ import pymysql
 MYSQL_DB = 'health_stragegy'
 MYSQL_USER = 'health_stragegy'
 MYSQL_PASS = 'd41d8cd98f00b204'
-MYSQL_HOST = '10.6.155.200'
+MYSQL_HOST = '10.6.149.102'
 
 connection = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER,
                              password=MYSQL_PASS, db=MYSQL_DB,
